@@ -19,6 +19,7 @@ const chartContainer = ref(null);
 const jsonData = ref(jsonScores[0]);
 const pointDetail = ref(null);
 const hoveredPointIndex = inject('hoveredPointIndex');
+const selectedPointIndex = inject('selectedPointIndex');
 
 onMounted(async () => {
   const objectSpectroscopy = await axios.get('/data/objeto_espectros.json');
@@ -40,6 +41,7 @@ onMounted(async () => {
       zoomType: 'xy',
       load: function () {
         this.hoveredPoint = null;
+        this.selectedPoint = null;
       },
     },
     title: {
@@ -61,6 +63,7 @@ onMounted(async () => {
     },
     plotOptions:{
       series:{
+        allowPointSelect: true,
         point:{
           events:{
             mouseOver: (e) => {
@@ -70,6 +73,16 @@ onMounted(async () => {
             mouseOut: () => {
               hoveredPointIndex.value = null
             },
+            select: function(event) {
+              selectedPointIndex.value = event.target.index;
+              this.series.chart.selectedPoint = this;
+              this.series.chart.redraw();
+            },
+            unselect: function() {
+              selectedPointIndex.value = null;
+              this.series.chart.selectedPoint = null;
+              this.series.chart.redraw();
+            }
           }
         }
       }
@@ -78,9 +91,8 @@ onMounted(async () => {
 });
 
 watch(hoveredPointIndex, (newIndex) => {
+  const chart = Highcharts.charts[props.chartId - 1]
   if (newIndex !== null) {
-    const chart = Highcharts.charts[props.chartId - 1]
-
     if (chart.hoveredPoint) {
       chart.hoveredPoint.setState('');
     }
@@ -88,9 +100,29 @@ watch(hoveredPointIndex, (newIndex) => {
     chart.hoveredPoint = chart.series[0].data[newIndex];
     chart.hoveredPoint.setState('hover');
     pointDetail.value = chart.hoveredPoint;
+  } else {
+    pointDetail.value = null;
+
+    if (chart.hoveredPoint) {
+      chart.hoveredPoint.setState('');
+    }
   }
 });
 
+watch(selectedPointIndex, (newIndex) => {
+  const chart = Highcharts.charts[props.chartId - 1]
+  if (newIndex !== null) {
+    const point = chart.series[0].data[newIndex];
+    if (point !== chart.selectedPoint) {
+      point.select(true, true);
+    }
+  } else {
+    if (chart.selectedPoint) {
+      chart.selectedPoint.select(false, true);
+    }
+  }
+  chart.redraw();
+});
 </script>
 
 <style lang="scss" scoped>

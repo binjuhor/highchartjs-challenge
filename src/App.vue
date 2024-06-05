@@ -10,7 +10,9 @@
   import ScatterChart from '@/components/ScatterChart.vue'
 
   const hoveredPointIndex = ref(null);
+  const selectedPointIndex = ref(null);
   provide('hoveredPointIndex', hoveredPointIndex);
+  provide('selectedPointIndex', selectedPointIndex);
 </script>
 
 <style scoped lang="scss">
