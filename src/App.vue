@@ -1,26 +1,28 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="flex">
+    <div class="chartLeft"><ScatterChart chart-id="1"/></div>
+    <div class="chartRight"><ScatterChart chart-id="2"/></div>
+  </div>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+<script setup>
+  import { ref, provide } from 'vue';
+  import ScatterChart from '@/components/ScatterChart.vue'
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  const hoveredPointIndex = ref(null);
+  provide('hoveredPointIndex', hoveredPointIndex);
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style scoped lang="scss">
+  .flex {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    height: 100vh;
+    padding-top: 5vw;
+
+    div {
+      max-width: 600px;
+    }
+  }
 </style>

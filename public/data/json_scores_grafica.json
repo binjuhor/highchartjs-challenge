@@ -1,0 +1,98 @@
+[
+    {
+        "name": "PC1 vs PC2",
+        "data": [
+            {
+                "x": 9.258588245108244,
+                "y": -0.2278382409000197,
+                "color": "#00e272",
+                "fullname": "Class 1",
+                "fullid": 0,
+                "fullidA": 0,
+                "zIndex": 99
+            },
+            {
+                "x": 9.381889666871963,
+                "y": -0.2848140022930694,
+                "color": "#00e272",
+                "fullname": "Class 1",
+                "fullid": 0,
+                "fullidA": 1,
+                "zIndex": 99
+            },
+            {
+                "x": 9.547576706557344,
+                "y": -0.20173633992214768,
+                "color": "#00e272",
+                "fullname": "Class 1",
+                "fullid": 0,
+                "fullidA": 2,
+                "zIndex": 99
+            },
+            {
+                "x": 9.300160097863861,
+                "y": -0.2663166639081487,
+                "color": "#00e272",
+                "fullname": "Class 1",
+                "fullid": 0,
+                "fullidA": 3,
+                "zIndex": 99
+            },
+            {
+                "x": 10.178755789997451,
+                "y": 0.12203314275794752,
+                "color": "#00e272",
+                "fullname": "Class 1",
+                "fullid": 0,
+                "fullidA": 4,
+                "zIndex": 99
+            },
+            {
+                "x": 10.218845917070634,
+                "y": 0.07768640286855777,
+                "color": "#00e272",
+                "fullname": "Class 1",
+                "fullid": 0,
+                "fullidA": 5,
+                "zIndex": 99
+            },
+            {
+                "x": 10.193657160492874,
+                "y": 0.11656419339334056,
+                "color": "#00e272",
+                "fullname": "Class 1",
+                "fullid": 0,
+                "fullidA": 6,
+                "zIndex": 99
+            },
+            {
+                "x": 10.222093272146601,
+                "y": 0.15353223370115066,
+                "color": "#00e272",
+                "fullname": "Class 1",
+                "fullid": 0,
+                "fullidA": 7,
+                "zIndex": 99
+            },
+            {
+                "x": 9.99130911390695,
+                "y": 0.24332789245631092,
+                "color": "#00e272",
+                "fullname": "Class 1",
+                "fullid": 0,
+                "fullidA": 8,
+                "zIndex": 99
+            },
+            {
+                "x": 10.209822730074972,
+                "y": 0.1919351080132372,
+                "color": "#00e272",
+                "fullname": "Class 1",
+                "fullid": 0,
+                "fullidA": 9,
+                "zIndex": 99
+            }
+        ],
+        "zIndex": 2
+    }
+]
