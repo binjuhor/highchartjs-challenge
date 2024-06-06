@@ -158,10 +158,6 @@ onMounted(async () => {
   }
 });
 
-const getCurrentChart = () => {
-  return Highcharts.charts[props.chartId - 1]
-}
-
 // Sync hovered point with hoveredPointIndex
 watch(hoveredPointIndex, (newIndex) => {
   const chart = getCurrentChart();
@@ -199,6 +195,10 @@ watch(selectedPointIndex, (newIndex) => {
   }
   chart.redraw();
 });
+
+const getCurrentChart = () => {
+  return Highcharts.charts[props.chartId - 1]
+}
 
 const resetContextMenu = () => {
   selectedIds.value = [];
@@ -259,7 +259,8 @@ const toggleSelectMode = () => {
       allowPointSelect: true
     });
   }
-  showContextMenu.value = false;
+
+  resetContextMenu();
 }
 </script>
 
