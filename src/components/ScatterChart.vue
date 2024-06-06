@@ -18,7 +18,7 @@
         <li :class="selectedIds.length ? 'active' : 'disabled'">
           <img src="/images/change.png" width="12px" alt="">
           <span>Change selected spectra to class:</span>
-          <select>
+          <select v-model="classChangedTo">
             <option value="0">Select an option</option>
             <option value="1">Class 1</option>
             <option value="2">Class 2</option>
@@ -29,11 +29,11 @@
           <img src="/images/magnifying-glass.png" width="12px" alt="">
           <span>Reset zoom</span>
         </li>
-        <li :class="selectedIds.length ? 'active' : 'disabled'">
+        <li :class="selectedIds.length ? 'active' : 'disabled'" @click="handleDeletePoints">
           <img src="/images/trash-can.png" width="12px" alt="">
           <span>Delete selected spectra</span>
         </li>
-        <li class="border-block">
+        <li class="border-block" @click="handleRecalculatePCA">
           <img src="/images/refresh-page-option.png" width="12px" alt="">
           <span>Recalculate PCA</span>
         </li>
@@ -68,6 +68,7 @@ const selectedPointIndex = inject('selectedPointIndex');
 const showContextMenu = ref(false  );
 const selectedIds = ref([]);
 const seriesData = ref([]);
+const classChangedTo = ref(0);
 
 onMounted(async () => {
   try{
@@ -162,19 +163,19 @@ onMounted(async () => {
 watch(hoveredPointIndex, (newIndex) => {
   const chart = getCurrentChart();
 
-  if (newIndex !== null) {
+  if (newIndex !== null && chart.series[0].data[newIndex]) {
     if (chart.hoveredPoint) {
-      chart.hoveredPoint.setState('');
+      chart.hoveredPoint?.setState('');
     }
 
-    chart.hoveredPoint = chart.series[0].data[newIndex];
-    chart.hoveredPoint.setState('hover');
-    pointDetail.value = chart.hoveredPoint;
+    chart.hoveredPoint = chart.series[0]?.data[newIndex];
+    chart.hoveredPoint?.setState('hover');
+    pointDetail.value = chart?.hoveredPoint;
   } else {
     pointDetail.value = null;
 
     if (chart.hoveredPoint) {
-      chart.hoveredPoint.setState('');
+      chart.hoveredPoint?.setState('');
     }
   }
 });
@@ -183,7 +184,7 @@ watch(hoveredPointIndex, (newIndex) => {
 watch(selectedPointIndex, (newIndex) => {
   const chart = getCurrentChart();
 
-  if (newIndex !== null) {
+  if (newIndex !== null && chart.series[0].data[newIndex]) {
     const point = chart.series[0].data[newIndex];
     if (point !== chart.selectedPoint) {
       point.select(true, true);
@@ -249,7 +250,7 @@ const handleCloseContextMenu = () => {
 const toggleSelectMode = () => {
   const chart = getCurrentChart();
 
-  if (chart.series[0].options.allowPointSelect) {
+  if (chart?.series[0]?.options?.allowPointSelect) {
     chart.series[0].update({
       allowPointSelect: false
     });
@@ -268,6 +269,27 @@ const handleResetZoom = () => {
   chart.xAxis[0].setExtremes(null, null);
   chart.yAxis[0].setExtremes(null, null);
   showContextMenu.value = false;
+}
+
+const handleDeletePoints = () => {
+  const chart = getCurrentChart();
+
+  if (selectedIds.value.length === 0) {
+    return;
+  }
+
+  selectedIds.value.forEach(id => {
+    const point = chart.series[0]?.data.find(point => point.id === id);
+    if (point) {
+      point.remove(true, true);
+    }
+  });
+
+  resetContextMenu();
+}
+
+const handleRecalculatePCA = () => {
+  console.log('Recalculate PCA')
 }
 </script>
 
