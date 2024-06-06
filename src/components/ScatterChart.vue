@@ -53,7 +53,7 @@
 <script setup>
 import { ref, onMounted, inject, defineProps, watch } from 'vue'
 import Highcharts from 'highcharts';
-import jsonScores from '@/data/json_scores_grafica.json'
+import jsonScores from '@/data/json_scores_grafica.json' // Main data for the chart
 import axios from 'axios'
 
 const props = defineProps({
@@ -71,7 +71,7 @@ const seriesData = ref([]);
 
 onMounted(async () => {
   try{
-    const objectSpectroscopy = await axios.get('/data/objeto_espectros.json');
+    const objectSpectroscopy = await axios.get('/data/objeto_espectros.json'); // data from API ex. realtime data
     seriesData.value = jsonScores.map(serie => ({
       name: serie.name,
       data: serie.data.map(point => ({
