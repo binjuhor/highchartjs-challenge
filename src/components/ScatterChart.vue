@@ -3,13 +3,13 @@
     <div ref="chartContainer"></div>
     <div class="contextMenu" v-if="showContextMenu">
       <ul>
-        <li :class="selectedIds.length ? 'active' : 'disabled'">
+        <li :class="selectedIds.length ? 'active' : 'disabled'" @click="handleExclude">
           <img src="/images/upload-big-arrow.png" width="12px" alt="">
-          <span @click="handleContextMenu">Exclude</span>
+          <span>Exclude</span>
         </li>
-        <li :class="selectedIds.length ? 'active' : 'disabled'">
+        <li :class="selectedIds.length ? 'active' : 'disabled'" @click="handleInclude">
           <img src="/images/download.png" width="12px" alt="">
-          <span  @click="handleContextMenu">Include</span>
+          <span>Include</span>
         </li>
         <li @click="toggleSelectMode">
           <img src="/images/refresh-page-option.png" width="12px" alt="">
@@ -80,6 +80,8 @@ onMounted(async () => {
         y: point.y,
         color: point.color,
         name: point.fullname,
+        originalColor: point.color,
+        excluded: false,
         details: objectSpectroscopy.data.find(item => parseInt(item[12]) === point.fullidA ? item[1] : null),
       }))
     }));
@@ -156,9 +158,14 @@ onMounted(async () => {
   }
 });
 
+const getCurrentChart = () => {
+  return Highcharts.charts[props.chartId - 1]
+}
+
 // Sync hovered point with hoveredPointIndex
 watch(hoveredPointIndex, (newIndex) => {
-  const chart = Highcharts.charts[props.chartId - 1]
+  const chart = getCurrentChart();
+
   if (newIndex !== null) {
     if (chart.hoveredPoint) {
       chart.hoveredPoint.setState('');
@@ -178,7 +185,8 @@ watch(hoveredPointIndex, (newIndex) => {
 
 // Sync selected point with selectedPointIndex
 watch(selectedPointIndex, (newIndex) => {
-  const chart = Highcharts.charts[props.chartId - 1]
+  const chart = getCurrentChart();
+
   if (newIndex !== null) {
     const point = chart.series[0].data[newIndex];
     if (point !== chart.selectedPoint) {
@@ -192,45 +200,46 @@ watch(selectedPointIndex, (newIndex) => {
   chart.redraw();
 });
 
-// Show context menu
-const handleContextMenu = (e) => {
-  const chart = Highcharts.charts[props.chartId - 1]
-  if (!selectedIds.value.length) {
-    e.preventDefault();
-    return;
-  }
-
-  if (e.target.innerText === 'Exclude' && selectedIds.value.length) {
-    handleExclude(chart);
-  }
-
-  if (e.target.innerText === 'Include' && selectedIds.value.length) {
-    handleInclude(chart);
-  }
-
+const resetContextMenu = () => {
   selectedIds.value = [];
   showContextMenu.value = false;
 }
 
-const handleInclude = (chart) => {
+const handleInclude = () => {
+  const chart = getCurrentChart();
+
+  if (selectedIds.value.length === 0) {
+    return;
+  }
+
   selectedIds.value.forEach(id => {
     const point = chart.series[0].data.find(point => point.id === id);
     point.update({
-      color: "#00e272",
+      color: point.originalColor,
       selected: false
     });
   });
-  chart.redraw();
+
+  resetContextMenu();
 }
 
-const handleExclude = (chart) => {
+const handleExclude = () => {
+  const chart = getCurrentChart();
+
+  if (selectedIds.value.length === 0) {
+    return;
+  }
+
   selectedIds.value.forEach(id => {
     const point = chart.series[0].data.find(point => point.id === id);
     point.update({
       color: 'rgba(0, 0, 0, 0.1)',
-      selected: false
+      selected: false,
+      excluded: true,
     });
   });
+
+  resetContextMenu()
 }
 
 const handleCloseContextMenu = () => {
@@ -238,14 +247,13 @@ const handleCloseContextMenu = () => {
 }
 
 const toggleSelectMode = () => {
-  const chart = Highcharts.charts[props.chartId - 1]
+  const chart = getCurrentChart();
 
   if (chart.series[0].options.allowPointSelect) {
     chart.series[0].update({
       allowPointSelect: false
     });
     selectedIds.value = [];
-
   } else {
     chart.series[0].update({
       allowPointSelect: true
