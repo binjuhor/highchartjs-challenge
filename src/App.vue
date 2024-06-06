@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
-    <div class="chartLeft"><ScatterChart chart-id="1"/></div>
-    <div class="chartRight"><ScatterChart chart-id="2"/></div>
+    <div class="chartLeft"><ScatterChart :chart-id="1"/></div>
+    <div class="chartRight"><ScatterChart :chart-id="2"/></div>
   </div>
 </template>
 
