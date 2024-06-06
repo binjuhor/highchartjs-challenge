@@ -25,9 +25,9 @@
             <option value="3">Class 3</option>
           </select>
         </li>
-        <li>
+        <li @click="handleResetZoom">
           <img src="/images/magnifying-glass.png" width="12px" alt="">
-          <span @click="handleResetZoom">Reset zoom</span>
+          <span>Reset zoom</span>
         </li>
         <li :class="selectedIds.length ? 'active' : 'disabled'">
           <img src="/images/trash-can.png" width="12px" alt="">
@@ -261,6 +261,13 @@ const toggleSelectMode = () => {
   }
 
   resetContextMenu();
+}
+
+const handleResetZoom = () => {
+  const chart = getCurrentChart();
+  chart.xAxis[0].setExtremes(null, null);
+  chart.yAxis[0].setExtremes(null, null);
+  showContextMenu.value = false;
 }
 </script>
 
