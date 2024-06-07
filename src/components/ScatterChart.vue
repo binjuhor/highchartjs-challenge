@@ -13,7 +13,7 @@
         </li>
         <li @click="toggleSelectMode">
           <img src="/images/refresh-page-option.png" width="12px" alt="">
-          <span>Actual action: "Select Mode"</span>
+          <span>Actual action: "Select Mode {{ selectMode ? 'On' : 'Off'}}"</span>
         </li>
         <li :class="selectedIds.length ? 'active' : 'disabled'">
           <img src="/images/change.png" width="12px" alt="">
@@ -69,11 +69,22 @@ const showContextMenu = ref(false  );
 const selectedIds = ref([]);
 const seriesData = ref([]);
 const classChangedTo = ref(0);
+const selectMode = ref(false);
 
-onMounted(async () => {
-  try{
-    const objectSpectroscopy = await axios.get('/data/objeto_espectros.json'); // data from API ex. realtime data
-    seriesData.value = jsonScores.map(serie => ({
+const handleGetPointData = async () => {
+  try {
+    const response = await axios.get('/data/objeto_espectros.json');
+    return response.data;
+  } catch (error) {
+    console.error('Error loading data:', error);
+  }
+}
+
+const setupChartSeries = async () => {
+  try {
+    const objectSpectroscopy = await handleGetPointData();
+
+    return jsonScores.map(serie => ({
       name: serie.name,
       data: serie.data.map(point => ({
         id: point.fullidA,
@@ -83,9 +94,17 @@ onMounted(async () => {
         name: point.fullname,
         originalColor: point.color,
         excluded: false,
-        details: objectSpectroscopy.data.find(item => parseInt(item[12]) === point.fullidA ? item[1] : null),
+        details: objectSpectroscopy.find(item => parseInt(item[12]) === point.fullidA ? item[1] : null),
       }))
     }));
+  } catch (error) {
+    console.error('Error setting up chart series:', error);
+  }
+}
+
+onMounted(async () => {
+  try{
+    seriesData.value = await setupChartSeries();
 
     Highcharts.chart(chartContainer.value, {
       chart: {
@@ -127,7 +146,7 @@ onMounted(async () => {
       },
       plotOptions:{
         series:{
-          allowPointSelect: false,
+          allowPointSelect: selectMode.value,
           point:{
             events:{
               mouseOver: (e) => {
@@ -155,7 +174,7 @@ onMounted(async () => {
       }
     });
   } catch (error) {
-    console.error('Error loading data:', error);
+    console.error('Error creating chart:', error);
   }
 });
 
@@ -270,18 +289,11 @@ const handleCloseContextMenu = () => {
 
 const toggleSelectMode = () => {
   const chart = getCurrentChart();
+  selectMode.value = !selectMode.value;
 
-  if (chart?.series[0]?.options?.allowPointSelect) {
-    chart.series[0].update({
-      allowPointSelect: false
-    });
-    selectedIds.value = [];
-  } else {
-    chart.series[0].update({
-      allowPointSelect: true
-    });
-  }
-
+  chart.series[0].update({
+    allowPointSelect: selectMode.value
+  });
   resetContextMenu();
 }
 
@@ -306,6 +318,14 @@ const handleDeletePoints = () => {
     }
   });
 
+  resetContextMenu();
+}
+
+const handleRecalculatePCA = async () => {
+  console.log('Recalculating PCA...');
+  seriesData.value = await setupChartSeries();
+  const chart = getCurrentChart();
+  chart.series[0].setData(seriesData.value[0].data);
   resetContextMenu();
 }
 </script>
