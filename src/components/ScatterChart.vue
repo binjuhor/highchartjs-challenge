@@ -164,17 +164,17 @@ watch(hoveredPointIndex, (newIndex) => {
   const chart = getCurrentChart();
 
   if (newIndex !== null && chart.series[0].data[newIndex]) {
-    if (chart.hoveredPoint) {
+    if (chart.hoveredPoint && !chart.series[0].data[newIndex] === undefined) {
       chart.hoveredPoint?.setState('');
     }
 
-    chart.hoveredPoint = chart.series[0]?.data[newIndex];
+    chart.hoveredPoint = chart.series[0].data[newIndex];
     chart.hoveredPoint?.setState('hover');
-    pointDetail.value = chart?.hoveredPoint;
+    pointDetail.value = chart.hoveredPoint;
   } else {
     pointDetail.value = null;
 
-    if (chart.hoveredPoint) {
+    if (chart.hoveredPoint && !chart.hoveredPoint === undefined) {
       chart.hoveredPoint?.setState('');
     }
   }
@@ -186,11 +186,11 @@ watch(selectedPointIndex, (newIndex) => {
 
   if (newIndex !== null && chart.series[0].data[newIndex]) {
     const point = chart.series[0].data[newIndex];
-    if (point !== chart.selectedPoint) {
+    if (point !== chart.selectedPoint && !point === undefined) {
       point.select(true, true);
     }
   } else {
-    if (chart.selectedPoint) {
+    if (chart.selectedPoint && !chart.selectedPoint === undefined) {
       chart.selectedPoint.select(false, true);
     }
   }
@@ -216,7 +216,7 @@ const handleInclude = () => {
   selectedIds.value.forEach(id => {
     const point = chart.series[0].data.find(point => point.id === id);
     point.update({
-      color: point.originalColor,
+      color: point?.originalColor,
       selected: false
     });
   });
