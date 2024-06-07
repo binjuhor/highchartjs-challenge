@@ -151,14 +151,14 @@ onMounted(async () => {
             events:{
               mouseOver: (e) => {
                 pointDetail.value = e.target
-                hoveredPointIndex.value = e.target.index
+                hoveredPointIndex.value = e.target?.index
               },
               mouseOut: () => {
                 hoveredPointIndex.value = null
               },
               select: function(event) {
-                selectedPointIndex.value = event.target.index;
-                selectedIds.value.push(event.target.id);
+                selectedPointIndex.value = event.target?.index;
+                selectedIds.value.push(event.target?.id);
                 this.series.chart.selectedPoint = this;
                 this.series.chart.redraw();
               },
@@ -203,17 +203,16 @@ watch(hoveredPointIndex, (newIndex) => {
 watch(selectedPointIndex, (newIndex) => {
   const chart = getCurrentChart();
 
-  if (newIndex !== null && chart.series[0].data[newIndex]) {
-    const point = chart.series[0].data[newIndex];
-    if (point !== chart.selectedPoint && !point === undefined) {
+  if (newIndex !== null && chart?.series[0].data[newIndex]) {
+    const point = chart?.series[0].data[newIndex];
+    if (point !== chart?.selectedPoint) {
       point.select(true, true);
     }
   } else {
-    if (chart.selectedPoint && !chart.selectedPoint === undefined) {
-      chart.selectedPoint.select(false, true);
+    if (chart?.selectedPoint) {
+      chart?.selectedPoint.select(false, true);
     }
   }
-  chart.redraw();
 });
 
 watch(classChangedTo, (newClass) => {
