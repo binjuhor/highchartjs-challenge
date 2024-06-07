@@ -18,7 +18,7 @@
         <li :class="selectedIds.length ? 'active' : 'disabled'">
           <img src="/images/change.png" width="12px" alt="">
           <span>Change selected spectra to class:</span>
-          <select v-model="classChangedTo">
+          <select v-model="classChangedTo" :disabled="!selectedIds.length">
             <option value="0">Select an option</option>
             <option value="1">Class 1</option>
             <option value="2">Class 2</option>
@@ -197,6 +197,26 @@ watch(selectedPointIndex, (newIndex) => {
   chart.redraw();
 });
 
+watch(classChangedTo, (newClass) => {
+  const chart = getCurrentChart();
+
+  if (selectedIds.value.length === 0 || newClass === 0) {
+    return;
+  }
+
+  const colors = ['red', 'blue', '#5b5fc6'];
+
+  selectedIds.value.forEach(id => {
+    const point = chart.series[0].data.find(point => point.id === id);
+    point.update({
+      color: colors[newClass - 1],
+      selected: false
+    });
+  });
+
+  resetContextMenu();
+});
+
 const getCurrentChart = () => {
   return Highcharts.charts[props.chartId - 1]
 }
@@ -204,6 +224,7 @@ const getCurrentChart = () => {
 const resetContextMenu = () => {
   selectedIds.value = [];
   showContextMenu.value = false;
+  classChangedTo.value = 0;
 }
 
 const handleInclude = () => {
@@ -286,10 +307,6 @@ const handleDeletePoints = () => {
   });
 
   resetContextMenu();
-}
-
-const handleRecalculatePCA = () => {
-  console.log('Recalculate PCA')
 }
 </script>
 
