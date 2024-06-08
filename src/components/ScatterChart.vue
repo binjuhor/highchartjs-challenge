@@ -321,7 +321,6 @@ const handleDeletePoints = () => {
 }
 
 const handleRecalculatePCA = async () => {
-  console.log('Recalculating PCA...');
   seriesData.value = await setupChartSeries();
   const chart = getCurrentChart();
   chart.series[0].setData(seriesData.value[0].data);
