@@ -209,7 +209,7 @@ watch(selectedPointIndex, (newIndex) => {
       point.select(true, true);
     }
   } else {
-    if (chart?.selectedPoint) {
+    if (chart?.selectedPoint && !chart?.selectedPoint.destroyed) {
       chart?.selectedPoint.select(false, true);
     }
   }
